@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Panel Principal</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e9ecef;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .dashboard {
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+            margin-top: 50px;
+        }
+
+        .btn {
+            display: inline-block;
+            text-decoration: none;
+            padding: 10px 20px;
+            margin: 10px;
+            border-radius: 4px;
+            color: white;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-search {
+            background-color: #007bff;
+        }
+
+        .btn-search:hover {
+            background-color: #0056b3;
+        }
+
+        .btn-logout {
+            background-color: #dc3545;
+        }
+
+        .btn-logout:hover {
+            background-color: #c82333;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard">
+        <h1>¡Bienvenido, <span id="nombreUsuario"></span>!</h1>
+        <p>Seleccione una acción para continuar.</p>
+        <a href="buscador.html" class="btn btn-search">🔍 Ir al Buscador de Productos</a>
+        <button onclick="cerrarSesion()" class="btn btn-logout">🚪 Salir del Sistema</button>
+    </div>
+
+    <script>
+        const BACKEND_URL = 'http://localhost:5000';
+
+        window.onload = function () {
+            const nombre = localStorage.getItem('usuarioNombre');
+            if (!nombre) {
+                window.location.href = 'login.html';
+            } else {
+                document.getElementById('nombreUsuario').innerText = nombre;
+            }
+        };
+
+        function cerrarSesion() {
+            fetch(`${BACKEND_URL}/api/logout`, { method: 'POST' })
+                .then(() => {
+                    localStorage.removeItem('usuarioNombre');
+                    window.location.href = 'login.html';
+                });
+        }
+    </script>
+</body>
+
+</html>

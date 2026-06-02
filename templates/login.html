@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Login - Sistema Web</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .login-container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 90%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        .error {
+            color: red;
+            margin-bottom: 15px;
+            font-size: 14px;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-container">
+        <h2>Acceso al Sistema</h2>
+        <div id="errorMsg" class="error"></div>
+
+        <form id="loginForm">
+            <input type="text" id="username" placeholder="Usuario" required>
+            <input type="password" id="password" placeholder="Contraseña" required>
+            <button type="submit">Ingresar</button>
+        </form>
+    </div>
+
+    <script>
+        const BACKEND_URL = 'http://localhost:5000';
+
+        document.getElementById('loginForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+            const errorMsg = document.getElementById('errorMsg');
+
+            fetch(`${BACKEND_URL}/api/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: user, password: pass })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        localStorage.setItem('usuarioNombre', data.nombre);
+                        window.location.href = 'principal.html';
+                    } else {
+                        errorMsg.innerText = data.error;
+                        errorMsg.style.display = 'block';
+                    }
+                })
+                .catch(err => console.error('Error:', err));
+        });
+    </script>
+</body>
+
+</html>

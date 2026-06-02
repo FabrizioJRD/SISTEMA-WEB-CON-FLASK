@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Buscador de Productos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7f6;
+            padding: 20px;
+        }
+
+        .search-container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            max-width: 600px;
+            margin: 0 auto;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-buttons {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .btn {
+            padding: 8px 15px;
+            border-radius: 4px;
+            color: white;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-back {
+            background-color: #6c757d;
+        }
+
+        .btn-logout {
+            background-color: #dc3545;
+        }
+
+        .btn-submit {
+            background-color: #28a745;
+        }
+
+        .result-card {
+            background: #e9ecef;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .error-msg {
+            color: red;
+            margin-top: 20px;
+            display: none;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            width: 60%;
+            margin-right: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="search-container">
+        <div class="nav-buttons">
+            <a href="principal.html" class="btn btn-back">⬅ Regresar</a>
+            <a href="login.html" onclick="localStorage.removeItem('usuarioNombre');" class="btn btn-logout">🚪 Salir del
+                Sistema</a>
+        </div>
+
+        <h2>Buscador de Inventario</h2>
+        <div style="display: flex;">
+            <input type="text" id="codigoInput" placeholder="Ingrese código (Ej. P001)">
+            <button class="btn btn-submit" onclick="buscarProducto()">Buscar</button>
+        </div>
+
+        <div id="errorMsg" class="error-msg">Producto no encontrado.</div>
+
+        <div id="resultado" class="result-card">
+            <h3 id="resNombre"></h3>
+            <p><strong>Código:</strong> <span id="resCodigo"></span></p>
+            <p><strong>Descripción:</strong> <span id="resDesc"></span></p>
+            <p><strong>Categoría:</strong> <span id="resCat"></span></p>
+            <p><strong>Precio:</strong> S/ <span id="resPrecio"></span></p>
+            <p><strong>Stock:</strong> <span id="resStock"></span> unidades</p>
+        </div>
+    </div>
+
+    <script>
+        const BACKEND_URL = 'http://localhost:5000';
+
+        function buscarProducto() {
+            const codigo = document.getElementById('codigoInput').value;
+            const errorMsg = document.getElementById('errorMsg');
+            const resultado = document.getElementById('resultado');
+
+            errorMsg.style.display = 'none';
+            resultado.style.display = 'none';
+
+            if (codigo.trim() === '') return;
+
+            fetch(`${BACKEND_URL}/api/buscar_producto`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ codigo: codigo })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.encontrado) {
+                        const p = data.producto;
+                        document.getElementById('resNombre').innerText = p.nombre;
+                        document.getElementById('resCodigo').innerText = p.codigo;
+                        document.getElementById('resDesc').innerText = p.descripcion;
+                        document.getElementById('resCat').innerText = p.categoria;
+                        document.getElementById('resPrecio').innerText = p.precio.toFixed(2);
+                        document.getElementById('resStock').innerText = p.stock;
+                        resultado.style.display = 'block';
+                    } else {
+                        errorMsg.style.display = 'block';
+                    }
+                })
+                .catch(err => console.error('Error:', err));
+        }
+    </script>
+</body>
+
+</html>
