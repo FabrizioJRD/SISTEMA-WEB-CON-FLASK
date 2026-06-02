@@ -20,7 +20,7 @@ def init_db():
     cursor.execute("SELECT COUNT(*) FROM usuarios")
     if cursor.fetchone()[0] == 0:
         cursor.execute("INSERT INTO usuarios (username, password, nombre) VALUES ('admin', '1234', 'Administrador del Sistema')")
-        cursor.execute("INSERT INTO productos (codigo, nombre, descripcion, precio, stock, categoria) VALUES ('P001', 'Laptop Pro', 'Laptop 16GB RAM 512GB SSD', 3500.00, 15, 'Electrónica')")
+        cursor.execute("INSERT INTO productos (codigo, nombre, descripcion, precio, stock, categoria) VALUES ('0001', 'Laptop HP', 'Laptop 16GB RAM 512GB SSD', 3500.00, 15, 'Electrónicos')")
         conn.commit()
     conn.close()
 
